@@ -1,0 +1,15 @@
+#!/bin/bash
+
+Check for established connections to specific IP addresses
+
+connections=$(sudo /opt/vyatta/bin/vyatta-op-cmd-wrapper show conntrack table ipv4 | awk '$2 ~ /^(10\.10\.10\.5|10\.20\.10\.5)/ && $6 ~ /ES/')
+
+If no connections are found, restart VPN
+
+if [ -z "$connections" ]; then
+    echo "No established connections found to 10.100.75.5 or 10.200.75.5. Restarting VPN..."
+    sudo /opt/vyatta/bin/vyatta-op-cmd-wrapper restart vpn
+else
+    echo "Established connection(s) found:"
+    echo "$connections"
+fi
